@@ -21,10 +21,11 @@ func startRelay() {
 	identify.ActivationThresh = 0
 	// Create a host to act as a middleman to relay messages on our behalf
 	relay1, err := libp2p.New(
-		libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/1234"),
+		// libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/1234"),
 		libp2p.Transport(tcp.NewTCPTransport),
-		libp2p.ForceReachabilityPrivate(),
-		libp2p.EnableHolePunching(),
+		libp2p.ForceReachabilityPublic(),
+		libp2p.NATPortMap(),
+		libp2p.EnableRelayService(),
 	)
 	if err != nil {
 		log.Printf("Failed to create relay1: %v", err)
