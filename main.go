@@ -8,7 +8,6 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 )
 
 var wait = make(chan struct{})
@@ -22,7 +21,6 @@ func startRelay() {
 	// Create a host to act as a middleman to relay messages on our behalf
 	relay1, err := libp2p.New(
 		// libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/1234"),
-		libp2p.Transport(tcp.NewTCPTransport),
 		libp2p.ForceReachabilityPublic(),
 		libp2p.NATPortMap(),
 		libp2p.EnableRelayService(),
@@ -50,6 +48,6 @@ func startRelay() {
 	}
 
 	addrs, _ := peer.AddrInfoToP2pAddrs(&relay1info)
-	fmt.Printf("Relay 1 info: %v", addrs[0].String())
+	fmt.Printf("Relay 1 info: %v", addrs)
 	<-wait
 }
