@@ -9,6 +9,8 @@ import (
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
+var wait = make(chan struct{})
+
 func main() {
 	startRelay()
 }
@@ -38,5 +40,7 @@ func startRelay() {
 		Addrs: relay1.Addrs(),
 	}
 
-	fmt.Printf("Relay 1 info: %v", relay1info.Addrs)
+	addrs, _ := peer.AddrInfoToP2pAddrs(&relay1info)
+	fmt.Printf("Relay 1 info: %v", addrs[0].String())
+	<-wait
 }
