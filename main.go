@@ -41,7 +41,7 @@ func startRelay() {
 	}
 
 	addrs, _ := peer.AddrInfoToP2pAddrs(&relay1info)
-	fmt.Printf("Relay 1 info: %v", addrs[0].String())
+	fmt.Printf("Relay address: %v", addrs[0].String())
 
 	select {}
 }
