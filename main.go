@@ -7,6 +7,8 @@ import (
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 )
 
 var wait = make(chan struct{})
@@ -16,8 +18,14 @@ func main() {
 }
 
 func startRelay() {
+	identify.ActivationThresh = 0
 	// Create a host to act as a middleman to relay messages on our behalf
-	relay1, err := libp2p.New()
+	relay1, err := libp2p.New(
+		libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/1234"),
+		libp2p.Transport(tcp.NewTCPTransport),
+		libp2p.ForceReachabilityPrivate(),
+		libp2p.EnableHolePunching(),
+	)
 	if err != nil {
 		log.Printf("Failed to create relay1: %v", err)
 		return
