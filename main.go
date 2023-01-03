@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/TwiN/go-color"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
+
+var km KeyManager
 
 func main() {
 	startRelay()
 }
 
 func startRelay() {
+	km.InitKeyManager()
+	
 	// Create a host to act as a middleman to relay messages on our behalf
 	relay1, err := libp2p.New(
 		libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/2468"),
+		libp2p.Identity(km.PrivKey),
 	)
 	if err != nil {
 		log.Printf("Failed to create relay1: %v", err)
@@ -41,7 +47,7 @@ func startRelay() {
 	}
 
 	addrs, _ := peer.AddrInfoToP2pAddrs(&relay1info)
-	fmt.Printf("Relay address: %v", addrs[0].String())
+	fmt.Printf("Relay address: %v", color.InGreen(addrs[0].String()))
 
 	select {}
 }
