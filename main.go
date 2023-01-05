@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/TwiN/go-color"
 	"github.com/libp2p/go-libp2p"
@@ -16,9 +17,31 @@ func main() {
 	startRelay()
 }
 
+const (
+	MAX_DATA_TRANSFER_ALLOWED = 1 * 1024 * 1024 * 1024 // 1GB
+	NODE_CONNECTION_DURATION  = time.Hour * 24         // 1 day
+)
+
 func startRelay() {
 	km.InitKeyManager()
-	
+
+	relayResource := relay.Resources{
+		Limit: &relay.RelayLimit{
+			Duration: NODE_CONNECTION_DURATION,
+			Data:     MAX_DATA_TRANSFER_ALLOWED,
+		},
+
+		MaxReservations: 128,
+		MaxCircuits:     16,
+		BufferSize:      2048,
+
+		MaxReservationsPerPeer: 4,
+		MaxReservationsPerIP:   8,
+		MaxReservationsPerASN:  32,
+
+		ReservationTTL: time.Hour,
+	}
+
 	// Create a host to act as a middleman to relay messages on our behalf
 	relay1, err := libp2p.New(
 		libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/2468"),
@@ -35,7 +58,8 @@ func startRelay() {
 	// "dedicated" relay services.
 	// In circuit relay v2 (which we're using here!) it is rate limited so that
 	// any node can offer this service safely
-	_, err = relay.New(relay1)
+	_, err = relay.New(relay1, relay.WithResources(relayResource))
+
 	if err != nil {
 		log.Printf("Failed to instantiate the relay: %v", err)
 		return
