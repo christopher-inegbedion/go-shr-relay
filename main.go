@@ -18,7 +18,11 @@ func main() {
 }
 
 const (
+	// This is the maximum amount of data that can be transferred at any one time through the relay.
+	// Any more than this and the relay will reset the connection.
 	MAX_DATA_TRANSFER_ALLOWED = 1 * 1024 * 1024 * 1024 // 1GB
+
+	// This is how long a relayed connection can last before it is reset.
 	NODE_CONNECTION_DURATION  = time.Hour * 24         // 1 day
 )
 
@@ -33,10 +37,10 @@ func startRelay() {
 
 		MaxReservations: 128,
 		MaxCircuits:     16,
-		BufferSize:      2048,
+		BufferSize:      4096,
 
-		MaxReservationsPerPeer: 4,
-		MaxReservationsPerIP:   8,
+		MaxReservationsPerPeer: 100,
+		MaxReservationsPerIP:   100,
 		MaxReservationsPerASN:  32,
 
 		ReservationTTL: time.Hour,
