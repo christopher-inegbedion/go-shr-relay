@@ -43,7 +43,7 @@ func startRelay() {
 		MaxReservationsPerIP:   100,
 		MaxReservationsPerASN:  32,
 
-		ReservationTTL: time.Hour,
+		ReservationTTL: time.Hour * 24 * 7 * 4 * 12,
 	}
 
 	// Create a host to act as a middleman to relay messages on our behalf
